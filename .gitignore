@@ -1,0 +1,90 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Environment variables & secrets (CRITICAL SOFTWARE SECURITY)
+.env
+.env.*
+!.env.example
+secrets/
+*.secret
+*.password
+
+# Private Keys & Sensitive PKI Material
+# NOTE: Never commit private keys, root CA private keys, or passwords!
+*.key
+*.key.pem
+*.priv
+*.pfx
+*.p12
+step-ca/secrets/
+step-ca/db/
+pki-data/root/private/
+pki-data/intermediate/private/
+
+# Testing & Coverage
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+htmlcov/
+
+# Static Analysis & Security Scanners
+.semgrep/
+semgrep.sarif
+testssl_reports/
+*.scan.json
+
+# Databases & local persistent storage
+*.sqlite3
+*.db
+pgdata/
+docker-data/
+
+# IDEs & Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.directory
+
+# Operating Systems
+.DS_Store
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini

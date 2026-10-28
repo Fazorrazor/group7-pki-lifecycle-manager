@@ -1,0 +1,116 @@
+services:
+  # ============================================================================
+  # 1. Database (PostgreSQL)
+  # ============================================================================
+  db:
+    image: postgres:16-alpine
+    container_name: pki-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-pki_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_this_in_production}
+      POSTGRES_DB: ${DB_NAME:-pki_lifecycle_db}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-pki_user} -d ${DB_NAME:-pki_lifecycle_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pki-network
+
+  # ============================================================================
+  # 2. Private Certificate Authority & ACME Server (step-ca)
+  # ============================================================================
+  step-ca:
+    image: smallstep/step-ca:latest
+    container_name: pki-step-ca
+    restart: unless-stopped
+    environment:
+      - DOCKER_STEPCA_INIT_NAME=Group7-Lab-CA
+      - DOCKER_STEPCA_INIT_DNS_NAMES=localhost,step-ca,ca.internal.lab
+      - DOCKER_STEPCA_INIT_REMOTE_MANAGEMENT=true
+    volumes:
+      - step-ca-data:/home/step
+    ports:
+      - "9000:9000"
+    networks:
+      - pki-network
+
+  # ============================================================================
+  # 3. Inventory & Certificate Lifecycle Backend (FastAPI)
+  # ============================================================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pki-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-pki_user}
+      - DB_PASSWORD=${DB_PASSWORD:-change_this_in_production}
+      - DB_NAME=${DB_NAME:-pki_lifecycle_db}
+      - STEP_CA_URL=https://step-ca:9000
+    ports:
+      - "8000:8000"
+    networks:
+      - pki-network
+
+  # ============================================================================
+  # 4. Lab NGINX Endpoints (5+ containerized internal services)
+  # ============================================================================
+  endpoint-auth:
+    image: nginx:alpine
+    container_name: lab-auth-service
+    ports:
+      - "8443:443"
+    networks:
+      - pki-network
+
+  endpoint-billing:
+    image: nginx:alpine
+    container_name: lab-billing-service
+    ports:
+      - "8444:443"
+    networks:
+      - pki-network
+
+  endpoint-vault:
+    image: nginx:alpine
+    container_name: lab-vault-service
+    ports:
+      - "8445:443"
+    networks:
+      - pki-network
+
+  endpoint-metrics:
+    image: nginx:alpine
+    container_name: lab-metrics-service
+    ports:
+      - "8446:443"
+    networks:
+      - pki-network
+
+  endpoint-portal:
+    image: nginx:alpine
+    container_name: lab-portal-service
+    ports:
+      - "8447:443"
+    networks:
+      - pki-network
+
+volumes:
+  pgdata:
+  step-ca-data:
+
+networks:
+  pki-network:
+    driver: bridge

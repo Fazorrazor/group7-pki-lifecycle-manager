@@ -1,0 +1,168 @@
+{
+  "version": "2.0",
+  "summary": {
+    "title": "Project 7: Private PKI and Certificate Lifecycle Manager",
+    "owner": "Group 7 (CSSS 441 Software Security I)",
+    "description": "Threat model for two-tier private PKI, ACME automated certificate lifecycle manager, inventory scanner, and CT monitor."
+  },
+  "detail": {
+    "contributors": [
+      { "name": "Arnold Niikoi Djanie" },
+      { "name": "Peter Myles Etroo" },
+      { "name": "Aaron Tettey-Fio" },
+      { "name": "Osei Elvis" },
+      { "name": "Daniel Odame Lartey" },
+      { "name": "Edinam Afi Ezuh" }
+    ],
+    "diagrams": [
+      {
+        "title": "Level-1 Data Flow Diagram (PKI & Lifecycle Manager)",
+        "id": 0,
+        "size": { "width": 1200, "height": 800 },
+        "cells": [
+          {
+            "id": "tb-offline",
+            "type": "tm.Boundary",
+            "name": "Air-Gapped Offline Root CA Boundary"
+          },
+          {
+            "id": "tb-internal",
+            "type": "tm.Boundary",
+            "name": "Internal Management Zone"
+          },
+          {
+            "id": "tb-dmz",
+            "type": "tm.Boundary",
+            "name": "Lab Services DMZ"
+          },
+          {
+            "id": "proc-stepca",
+            "type": "tm.Process",
+            "name": "step-ca (ACME & Intermediate CA)",
+            "threats": [
+              {
+                "title": "ACME Client Impersonation",
+                "type": "Spoofing",
+                "status": "Identified",
+                "severity": "High",
+                "description": "Attacker spoofs an internal lab endpoint to request certificates for unauthorized hostnames."
+              },
+              {
+                "title": "Intermediate CA Private Key Exfiltration",
+                "type": "Information Disclosure",
+                "status": "Identified",
+                "severity": "High",
+                "description": "Unauthorized access to the container or host filesystem exposes the intermediate private key."
+              }
+            ]
+          },
+          {
+            "id": "proc-inventory",
+            "type": "tm.Process",
+            "name": "FastAPI Inventory & Control Plane",
+            "threats": [
+              {
+                "title": "SQL Injection in Endpoint Query Service",
+                "type": "Tampering",
+                "status": "Identified",
+                "severity": "High",
+                "description": "Malicious search strings injected into endpoint lookup to extract or alter certificate database records."
+              },
+              {
+                "title": "Denial of Service via Scan Flooding",
+                "type": "Denial of Service",
+                "status": "Identified",
+                "severity": "Medium",
+                "description": "Attacker floods inventory scan endpoint with connection requests to exhaust server threads."
+              }
+            ]
+          },
+          {
+            "id": "proc-dashboard",
+            "type": "tm.Process",
+            "name": "Web Dashboard & Alert Dispatcher",
+            "threats": [
+              {
+                "title": "Stored Cross-Site Scripting (XSS) via Certificate SANs",
+                "type": "Tampering",
+                "status": "Identified",
+                "severity": "High",
+                "description": "Malicious payload embedded in certificate Common Name or SAN executed in admin browser dashboard."
+              },
+              {
+                "title": "Alert Dispatch Tampering",
+                "type": "Tampering",
+                "status": "Identified",
+                "severity": "Medium",
+                "description": "Expiry alert payloads modified in transit to suppress critical warning notifications."
+              }
+            ]
+          },
+          {
+            "id": "store-postgres",
+            "type": "tm.Store",
+            "name": "PostgreSQL Certificate & Scan DB",
+            "threats": [
+              {
+                "title": "Direct Database Modification Bypassing Audit",
+                "type": "Repudiation",
+                "status": "Identified",
+                "severity": "Medium",
+                "description": "Attacker with database access alters certificate status without logging in audit trails."
+              },
+              {
+                "title": "Unauthorized Access to Stored Credentials",
+                "type": "Information Disclosure",
+                "status": "Identified",
+                "severity": "High",
+                "description": "Plaintext passwords or tokens in database exposed via unencrypted storage."
+              }
+            ]
+          },
+          {
+            "id": "proc-ocsp",
+            "type": "tm.Process",
+            "name": "OCSP / CRL Responder",
+            "threats": [
+              {
+                "title": "OCSP Replay / Tampering Attack",
+                "type": "Tampering",
+                "status": "Identified",
+                "severity": "High",
+                "description": "Stale 'Good' OCSP response replayed to bypass revoked certificate enforcement."
+              },
+              {
+                "title": "OCSP Responder DoS Leading to Fail-Open",
+                "type": "Denial of Service",
+                "status": "Identified",
+                "severity": "High",
+                "description": "Flooding OCSP responder causing clients to bypass revocation checks if soft-failing."
+              }
+            ]
+          },
+          {
+            "id": "ext-endpoints",
+            "type": "tm.Actor",
+            "name": "NGINX Lab Web Services (5+ Endpoints)",
+            "threats": [
+              {
+                "title": "Weak Cipher / Protocol Downgrade",
+                "type": "Information Disclosure",
+                "status": "Identified",
+                "severity": "Medium",
+                "description": "Misconfigured NGINX instance allows TLS 1.0/1.1 or CBC ciphers vulnerable to plaintext recovery."
+              },
+              {
+                "title": "Privilege Escalation via Unrestricted Cert Scope",
+                "type": "Elevation of Privilege",
+                "status": "Identified",
+                "severity": "High",
+                "description": "Issued certificate lacks path-length or name constraints, allowing client cert to sign subordinate certs."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

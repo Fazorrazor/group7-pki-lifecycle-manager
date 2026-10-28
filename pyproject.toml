@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "group7-pki-lifecycle-manager"
+version = "0.1.0"
+description = "Private PKI and Certificate Lifecycle Manager for CSSS 441 Software Security I"
+authors = [
+    {name = "Arnold Niikoi Djanie", email = "arnolddjanieniix@gmail.com"},
+    {name = "Peter Myles Etroo"},
+    {name = "Aaron Tettey-Fio"},
+    {name = "Osei Elvis"},
+    {name = "Daniel Odame Lartey"},
+    {name = "Edinam Afi Ezuh"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.28.0",
+    "pydantic>=2.6.0",
+    "pydantic-settings>=2.2.0",
+    "psycopg[binary]>=3.1.18",
+    "jinja2>=3.1.3",
+    "markupsafe>=2.1.5",
+    "cryptography>=42.0.5",
+    "httpx>=0.27.0",
+    "python-dotenv>=1.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --strict-markers"
+
+[tool.setuptools.packages.find]
+where = ["src"]
