@@ -1,0 +1,5 @@
+# Lines starting with '#' are comments.
+# Each line is a pattern followed by one or more owners.
+# The repository owner (@Fazorrazor) is required to review and approve changes.
+
+* @Fazorrazor
