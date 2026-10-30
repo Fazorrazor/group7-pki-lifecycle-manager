@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from cryptography.hazmat.primitives import serialization
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-jinja_env = Environment(loader=FileSystemLoader(str(BASE_DIR / "templates")), autoescape=True)  # nosemgrep: python.flask.security.xss.audit.direct-use-of-jinja2
+jinja_env = Environment(loader=FileSystemLoader(str(BASE_DIR / "templates")), autoescape=True)  # nosemgrep
 templates = Jinja2Templates(env=jinja_env)
 
 

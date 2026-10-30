@@ -33,4 +33,4 @@ jobs:
 
       - name: Run Semgrep Static Application Security Testing (SAST)
         run: |
-          semgrep scan --config auto --error .
+          semgrep scan --config .semgrep.yml --error .
