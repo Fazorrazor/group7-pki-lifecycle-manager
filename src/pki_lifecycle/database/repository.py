@@ -184,3 +184,26 @@ class CertificateRepository:
         cursor.execute(sql, (str(days_threshold),))
         rows = cursor.fetchall()
         return [dict(r) for r in rows]
+
+    def get_all_certificates(self) -> List[Dict[str, Any]]:
+        """Retrieves all certificate records from inventory."""
+        sql = "SELECT * FROM certificates ORDER BY valid_to ASC"
+        cursor = self.conn.cursor()
+        cursor.execute(sql)
+        return [dict(r) for r in cursor.fetchall()]
+
+    def get_all_endpoints(self) -> List[Dict[str, Any]]:
+        """Retrieves all registered endpoints."""
+        sql = "SELECT * FROM endpoints ORDER BY id ASC"
+        cursor = self.conn.cursor()
+        cursor.execute(sql)
+        return [dict(r) for r in cursor.fetchall()]
+
+    def get_certificate_by_serial(self, serial_number: str) -> Optional[Dict[str, Any]]:
+        """Retrieves certificate record by serial number."""
+        sql = "SELECT * FROM certificates WHERE serial_number = ?"
+        cursor = self.conn.cursor()
+        cursor.execute(sql, (serial_number,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+

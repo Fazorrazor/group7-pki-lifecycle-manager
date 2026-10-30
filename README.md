@@ -39,6 +39,22 @@ This project implements a two-tier private Certificate Authority (CA) and an aut
 
 ---
 
+## 📚 Project Documentation Hub
+
+All formal deliverables, threat models, key ceremony logs, and technical reports are cataloged within the [`docs/`](docs/) directory:
+
+* 🏛️ [**System Architecture & Cryptographic Specification**](docs/architecture.md) — Two-Tier CA design, X.509 constraints, and subsystem decomposition.
+* 🛡️ [**Threat Model & STRIDE Matrix**](docs/threat-model/summary.md) — Level-1 DFD, 12 STRIDE threats, risk ratings, and chosen controls.
+* 🗝️ [**Documented Key Ceremony & CA Hierarchy**](docs/key-ceremony/ceremony-notes.md) — Offline Root CA key ceremony protocols, custody sign-offs, and SHA-256 fingerprints.
+* 🚀 [**Deployment & Operations Runbook**](docs/operations/deployment-guide.md) — One-command deployment, port mapping, and troubleshooting guide.
+* 📡 [**REST API & OCSP/CRL Reference**](docs/operations/api-reference.md) — Complete endpoint documentation and request/response schemas.
+* 🧪 [**Failure-Injection & Security Bar Verification**](docs/verification/failure-injection-tests.md) — Empirical evidence verifying detection of revoked, expired, and misconfigured certificates.
+* 📊 [**TLS Configuration Policy & testssl.sh Evidence**](docs/verification/tls-grading-and-testssl.md) — Before-and-after audit reports and AEAD cipher enforcement.
+* 🌐 [**Certificate Transparency Monitoring**](docs/verification/certificate-transparency.md) — Rogue CA detection via `crt.sh` API.
+* 📑 [**Academic Final Report (10–15 Pages)**](docs/report/project-report.md) — Comprehensive final submission covering design, verification, and member contributions.
+
+---
+
 ## 🛠️ Tech Stack & Lab Environment
 * **PKI & ACME Server:** `step-ca`, OpenSSL, `certbot` / `lego`[cite: 8]
 * **Lab Web Servers:** NGINX (5+ containerized internal endpoints)[cite: 7, 8]

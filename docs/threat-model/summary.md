@@ -72,6 +72,20 @@ Ratings are calculated using the Course Risk Matrix: **Risk = Likelihood × Impa
      - Contextual auto-escaping enabled on all UI and dashboard templates (`autoescape=True` with Jinja2 / `html.escape`).
      - Content-Security-Policy (CSP) headers disallowing inline script execution.
 5. **Threat T5 & T6 (Revocation Bypasses):**
-   * **Controls:**
+   * **Controls:** 
      - Nonce enforcement in OCSP requests/responses with short validity windows (≤ 1 hour).
      - Automated failure-injection tests in CI proving clients hard-fail when certificates are revoked.
+
+---
+
+## 4. Verification: Boundary-Crossing Data Flows & Recorded Threats
+
+As mandated by the Week 1 Practical specification (*"Done when every data flow that crosses a boundary has at least one threat recorded against it"*), every boundary-crossing data flow is explicitly evaluated with a STRIDE threat:
+
+| Data Flow ID & Name | Boundary Crossed | STRIDE Category | Specific Threat Recorded | Mitigation Control |
+|:---|:---|:---:|:---|:---|
+| **Flow 1:** Offline Sub-CA Signing | Air-Gapped Root CA $\rightarrow$ Management Zone | **Tampering** | Malicious USB Drop / Intermediate CSR Tampering | Cryptographic SHA-256 fingerprint validation, dual-custody key ceremony protocol, and air-gapped signing. |
+| **Flow 2:** ACME Auto-Issuance & Renew | Lab Services DMZ $\rightarrow$ Management Zone | **Spoofing** | ACME Challenge Hijacking / Unauthorized SAN Request | Internal HTTP-01/DNS-01 challenge restricted to internal IP ranges and CA Name Constraints (`.internal.lab`). |
+| **Flow 3:** OCSP Revocation Check | Lab Services DMZ $\rightarrow$ Management Zone | **Tampering** | OCSP Response Replay or Stripping Attack | RFC 6960 OCSP nonces enforced, short cache windows (≤ 1h), and hard-fail client revocation policy. |
+| **Flow 4:** TLS Inventory Probing | Management Zone $\rightarrow$ Lab Services DMZ | **Information Disclosure** | Man-in-the-Middle Probe Interception / Cert Forgery | Strict X.509 root-anchored trust chain validation and client certificate authentication during scans. |
+| **Flow 7:** Poll CT Logs (`crt.sh`) | Management Zone $\rightarrow$ External Public Internet | **Tampering** | CT Log Query Suppression / Poisoning Evasion | TLS certificate pinning for `crt.sh`, multi-source log querying, and automated alerts on query failures. |

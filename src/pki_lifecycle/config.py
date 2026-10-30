@@ -26,5 +26,13 @@ class Settings:
     alert_days_thresholds: tuple[int, ...] = (30, 7, 1)
     min_tls_version: str = "TLSv1.2"
 
+    # External Notifications
+    telegram_bot_token: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    telegram_chat_id: str = os.getenv("TELEGRAM_CHAT_ID", "")
+    smtp_host: str = os.getenv("SMTP_HOST", "")
+    smtp_port: int = int(os.getenv("SMTP_PORT", "587"))
+    alert_email_to: str = os.getenv("ALERT_EMAIL_TO", "")
+    alert_email_from: str = os.getenv("ALERT_EMAIL_FROM", "")
+
 
 settings = Settings()
